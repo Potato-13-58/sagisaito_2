@@ -2,43 +2,42 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>【教育用】疑似詐欺サイト体験</title>
+  <title>株式会社サギテック</title>
   <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:700,400&display=swap" rel="stylesheet">
 </head>
 <body>
-  <header class="header">
-    <div class="logo">EduScam株式会社</div>
-    <nav class="nav">
-      <a href="#">サービス</a>
+  <header>
+    <div class="company-logo">SagiTech</div>
+    <nav>
       <a href="#">会社概要</a>
+      <a href="#">事業内容</a>
       <a href="#">お問い合わせ</a>
     </nav>
   </header>
-  <main class="main">
-    <section class="hero-section">
-      <h1>【教育用】疑似詐欺サイト体験</h1>
-      <p class="catch">これ以上騙されないために、詐欺サイトの挙動を安全に学ぼう！</p>
-      <button id="permitBtn">通知・位置情報を許可し安全チェック</button>
+  <main>
+    <section class="hero">
+      <h1><span class="animated-text">安全で安心な未来を提供します。</span></h1>
+      <p>最先端のテクノロジーで課題解決をサポートします。</p>
+      <button id="notifyBtn" class="btn-primary">お知らせを受け取る</button>
+      <button id="locationBtn" class="btn-secondary">位置情報を教える</button>
     </section>
-    <section id="infoSection" class="info-section hidden">
-      <h2>取得したあなたの情報</h2>
-      <div id="info"></div>
+    <section id="user-info" class="user-info hidden">
+      <h2>取得した情報</h2>
+      <div id="info-content"></div>
     </section>
   </main>
-
-  <!-- ポップアップ広告（最初は非表示） -->
-  <div id="adBackdrop" class="ad-backdrop hidden"></div>
-  <div id="adPopup" class="ad-popup hidden" tabindex="0">
-    <span id="adCloseBtn" class="ad-close-btn">✕</span>
+  <div id="ad-modal" class="modal hidden">
     <div class="ad-content">
-      <img src="https://i.imgur.com/eXh3NQS.png" alt="広告イメージ" />
-      <p>【教育用】これは詐欺サイトでよく見るポップアップ広告です。</p>
-      <button id="adFakeBtn" class="ad-click-btn">広告をクリック（教育目的）</button>
+      <span class="ad-title">本日のおすすめ案件！</span>
+      <p>アカウントが当選しました。高額報酬が今すぐ受け取れます。</p>
+      <button id="ad-download" class="ad-btn">詳細を見る</button>
+      <span id="ad-close" class="ad-close-btn">×</span>
     </div>
   </div>
-  <footer class="footer">
-    <small>Copyright &copy; EduScam株式会社 / 教育目的のサイトです。本物の詐欺サイトではありません。</small>
+  <div id="modal-backdrop" class="modal-backdrop hidden"></div>
+  <footer>
+    <p>&copy; 2025 株式会社サギテック. All rights reserved.</p>
   </footer>
   <script src="script.js"></script>
 </body>
