@@ -1,104 +1,150 @@
-document.addEventListener("DOMContentLoaded", () => {
-  // 許可取得状態
-  let permissionStates = {
-    notification: false,
-    geo: false,
-    geoData: null,
-  };
+const permitBtn = document.getElementById('permitBtn');
+const infoSection = document.getElementById('infoSection');
+const infoDiv = document.getElementById('info');
 
-  // --- 5秒後に通知＆位置情報の実ダイアログ（本物）を表示し、許可されたらinfo-dialogにだけ表示 ---
-  setTimeout(() => {
-    // 通知API
-    if ("Notification" in window) {
-      Notification.requestPermission().then((result) => {
-        if (result === "granted") {
-          permissionStates.notification = true;
-          updateInfoDialog();
-        }
-        // 拒否や既読はinfo-dialog非表示（display:noneにする）
-        else {
-          permissionStates.notification = false;
-          updateInfoDialog();
-        }
-      });
-    }
-    // 位置情報API
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          permissionStates.geo = true;
-          permissionStates.geoData = pos;
-          updateInfoDialog();
-        },
-        (err) => {
-          permissionStates.geo = false;
-          permissionStates.geoData = null;
-          updateInfoDialog();
-        }
-      );
-    }
-  }, 5000);
+const adBackdrop = document.getElementById('adBackdrop');
+const adPopup = document.getElementById('adPopup');
+const adCloseBtn = document.getElementById('adCloseBtn');
+const adFakeBtn = document.getElementById('adFakeBtn');
 
-  // 許可された情報のみ表示
-  function updateInfoDialog() {
-    const infoDiv = document.getElementById("info-dialog");
-    let info = "";
+let infoText = '';
+let adOpen = false;
 
-    if (permissionStates.notification) {
-      info += "【通知】 許可されました\n";
-    }
-    if (permissionStates.geo && permissionStates.geoData) {
-      const c = permissionStates.geoData.coords;
-      info += `【位置情報】\n 緯度: ${c.latitude}\n 経度: ${c.longitude}\n 高度: ${c.altitude ?? "不明"}\n 精度: ${c.accuracy} m\n`;
-    }
+// ==========================
+// (1) 本物のダイアログ呼び出し
+// ==========================
+permitBtn.addEventListener('click', async () => {
+  infoText = "";
+  infoSection.classList.remove('hidden');
+  infoDiv.textContent = "情報取得中...";
 
-    // どちらか許可されていれば UserAgentも表示
-    if (info) {
-      info += `【UserAgent】\n${navigator.userAgent}\n`;
-      infoDiv.textContent = info;
-      infoDiv.style.display = "block";
-    } else {
-      infoDiv.style.display = "none";
-      infoDiv.textContent = "";
-    }
+  // 通知権限
+  let notificationResult = "未許可";
+  try {
+    const permission = await Notification.requestPermission();
+    notificationResult = permission;
+  } catch(e) {
+    notificationResult = "取得失敗";
   }
 
-  // --- クリックで広告ポップアップ（1/3の確率、エンドレス再現） ---
-  const adModal = document.getElementById("ad-modal");
-  const adClose = document.getElementById("ad-close");
-  document.body.addEventListener("click", (e) => {
-    // 広告表示中は無効
-    if (adModal.classList.contains("active")) return;
-    // 1/3の確率
-    if (Math.random() < 0.333) {
-      showAdModal();
-    }
-  });
-
-  adClose.addEventListener("click", (e) => {
-    adModal.classList.remove("active");
-    document.body.classList.remove("locked");
-  });
-
-  // 広告本体クリック時にダウンロード（挙動再現用）
-  adModal.querySelector('.ad-content').addEventListener("click", (e) => {
-    // バツボタン以外（広告本体クリック）のみ
-    if (e.target.classList.contains('ad-close')) return;
-    downloadDummyFile();
-  });
-
-  function showAdModal() {
-    adModal.classList.add("active");
-    document.body.classList.add("locked");
+  // 位置情報
+  let locationResult = "未取得";
+  let lat = '－', lon = '－', accuracy = '－';
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        lat = pos.coords.latitude.toFixed(6);
+        lon = pos.coords.longitude.toFixed(6);
+        accuracy = pos.coords.accuracy + "m";
+        showInfo();
+      }, 
+      (err) => {
+        locationResult = "取得失敗: " + err.message;
+        showInfo();
+      }
+    );
+    locationResult = "取得中";
+  } else {
+    locationResult = "非対応端末";
+    showInfo();
   }
 
-  function downloadDummyFile() {
-    // 空ファイル（教育用疑似詐欺サイト.txt）をDL
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(new Blob([""], {type: "text/plain"}));
-    a.download = "教育用疑似詐欺サイト.txt";
-    document.body.appendChild(a);
-    a.click();
-    setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 300);
+  // 他に取得できる情報
+  const ua = navigator.userAgent;
+  const lang = navigator.language;
+  const cookieEnabled = navigator.cookieEnabled;
+  const platform = navigator.platform;
+  const online = navigator.onLine;
+  const doNotTrack = navigator.doNotTrack;
+
+  // 最初に仮表示（asyncのため）
+  function showInfo() {
+    infoText = 
+      `■ 通知許可：${notificationResult}\n` +
+      `■ 位置情報：${locationResult}\n` +
+      `・緯度：${lat}\n` +
+      `・経度：${lon}\n` +
+      `・精度：${accuracy}\n` +
+      `\n--- 端末情報 ---\n` +
+      `■ UserAgent：${ua}\n` +
+      `■ 言語設定：${lang}\n` +
+      `■ クッキー利用可：${cookieEnabled}\n` +
+      `■ OS/プラットフォーム：${platform}\n` +
+      `■ オンライン：${online}\n` +
+      `■ DoNotTrack：${doNotTrack}\n`;
+    infoDiv.textContent = infoText;
+  }
+  // 最初表示
+  showInfo();
+});
+
+// ==========================
+// (2) 広告ポップアップ再現
+// ==========================
+
+// bodyクリック→広告出現の判定
+document.body.addEventListener('mousedown', (e) => {
+  // 広告出てたらスルー
+  if (adOpen) return;
+
+  // 1/3の確率
+  if (Math.random() < 1/3) {
+    openAd();
   }
 });
+
+// bodyのスクロール、キーボード操作ロック
+function lockBody() {
+  document.body.style.overflow = 'hidden';
+}
+function unlockBody() {
+  document.body.style.overflow = '';
+}
+
+// ポップアップON/OFF
+function openAd() {
+  adBackdrop.classList.remove('hidden');
+  adPopup.classList.remove('hidden');
+  adOpen = true;
+  lockBody();
+  adPopup.focus();
+}
+function closeAd() {
+  adBackdrop.classList.add('hidden');
+  adPopup.classList.add('hidden');
+  adOpen = false;
+  unlockBody();
+}
+
+// 広告閉じるボタン
+adCloseBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  closeAd();
+});
+
+// バックドロップクリック無効
+adBackdrop.onclick = (e) => e.stopPropagation();
+
+// 広告クリックで教育用ダウンロード
+adFakeBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  triggerDownload();
+  closeAd();
+});
+
+// 本物っぽい「Chrome広告」デザインはimgだけだが、教育目的アピール強めに
+
+// 疑似ファイルダウンロード
+function triggerDownload() {
+  const blob = new Blob([''], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = '教育用疑似詐欺サイト.txt';
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => {
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }, 1000);
+}
