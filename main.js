@@ -1,150 +1,119 @@
-const permitBtn = document.getElementById('permitBtn');
-const infoSection = document.getElementById('infoSection');
-const infoDiv = document.getElementById('info');
+// ===== 1種類目 詐欺サイト挙動 =====
 
-const adBackdrop = document.getElementById('adBackdrop');
-const adPopup = document.getElementById('adPopup');
-const adCloseBtn = document.getElementById('adCloseBtn');
-const adFakeBtn = document.getElementById('adFakeBtn');
+const notifyBtn = document.getElementById('notifyBtn');
+const locationBtn = document.getElementById('locationBtn');
+const infoSection = document.getElementById('user-info');
+const infoContent = document.getElementById('info-content');
 
-let infoText = '';
-let adOpen = false;
+let notifyAllowed = false;
+let locationAllowed = false;
+let gotInfo = {};
 
-// ==========================
-// (1) 本物のダイアログ呼び出し
-// ==========================
-permitBtn.addEventListener('click', async () => {
-  infoText = "";
-  infoSection.classList.remove('hidden');
-  infoDiv.textContent = "情報取得中...";
-
-  // 通知権限
-  let notificationResult = "未許可";
-  try {
-    const permission = await Notification.requestPermission();
-    notificationResult = permission;
-  } catch(e) {
-    notificationResult = "取得失敗";
+notifyBtn.onclick = async function() {
+  // 通知APIを直接呼び出し（ダイアログ本物）
+  if (window.Notification) {
+    try {
+      const perm = await Notification.requestPermission();
+      if (perm === 'granted') {
+        notifyAllowed = true;
+        Notification("通知が有効化されました！"); // フェイク通知送信
+        infoShowIfReady();
+      } else {
+        alert("通知許可が必要です。");
+      }
+    } catch(e) {
+      alert("通知の許可に失敗しました: " + e);
+    }
+  } else {
+    alert("このブラウザは通知APIに対応していません。");
   }
+};
 
-  // 位置情報
-  let locationResult = "未取得";
-  let lat = '－', lon = '－', accuracy = '－';
-  if (navigator.geolocation) {
+locationBtn.onclick = async function() {
+  if ("geolocation" in navigator) {
     navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        lat = pos.coords.latitude.toFixed(6);
-        lon = pos.coords.longitude.toFixed(6);
-        accuracy = pos.coords.accuracy + "m";
-        showInfo();
-      }, 
-      (err) => {
-        locationResult = "取得失敗: " + err.message;
-        showInfo();
+      function(position) {
+        locationAllowed = true;
+        gotInfo.lat = position.coords.latitude;
+        gotInfo.lng = position.coords.longitude;
+        gotInfo.acc = position.coords.accuracy;
+        infoShowIfReady();
+      },
+      function(error) {
+        alert("位置情報取得に失敗しました: " + error.message);
       }
     );
-    locationResult = "取得中";
   } else {
-    locationResult = "非対応端末";
-    showInfo();
+    alert('このブラウザは位置情報APIに対応していません。');
   }
+};
 
-  // 他に取得できる情報
-  const ua = navigator.userAgent;
-  const lang = navigator.language;
-  const cookieEnabled = navigator.cookieEnabled;
-  const platform = navigator.platform;
-  const online = navigator.onLine;
-  const doNotTrack = navigator.doNotTrack;
-
-  // 最初に仮表示（asyncのため）
-  function showInfo() {
-    infoText = 
-      `■ 通知許可：${notificationResult}\n` +
-      `■ 位置情報：${locationResult}\n` +
-      `・緯度：${lat}\n` +
-      `・経度：${lon}\n` +
-      `・精度：${accuracy}\n` +
-      `\n--- 端末情報 ---\n` +
-      `■ UserAgent：${ua}\n` +
-      `■ 言語設定：${lang}\n` +
-      `■ クッキー利用可：${cookieEnabled}\n` +
-      `■ OS/プラットフォーム：${platform}\n` +
-      `■ オンライン：${online}\n` +
-      `■ DoNotTrack：${doNotTrack}\n`;
-    infoDiv.textContent = infoText;
+function infoShowIfReady() {
+  if (notifyAllowed && locationAllowed) {
+    // 現在時刻やUA、IPはJS単体では取得不可であり、UAは取得可能
+    gotInfo.date = new Date().toLocaleString();
+    gotInfo.ua = navigator.userAgent;
+    gotInfo.language = navigator.language || navigator.languages?.[0];
+    gotInfo.platform = navigator.platform;
+    // WebRTC IP取得は外部API必要なため、標準で取得不可
+    infoSection.classList.remove('hidden');
+    infoContent.innerHTML = `
+      <ul>
+        <li><b>日時:</b> ${gotInfo.date}</li>
+        <li><b>位置情報:</b> ${gotInfo.lat}, ${gotInfo.lng}（精度±${gotInfo.acc}m）</li>
+        <li><b>ブラウザ:</b> ${gotInfo.ua}</li>
+        <li><b>言語:</b> ${gotInfo.language}</li>
+        <li><b>OS・プラットフォーム:</b> ${gotInfo.platform}</li>
+      </ul>
+      <small>※端末やブラウザの環境で取得できる範囲です</small>
+    `;
   }
-  // 最初表示
-  showInfo();
-});
-
-// ==========================
-// (2) 広告ポップアップ再現
-// ==========================
-
-// bodyクリック→広告出現の判定
-document.body.addEventListener('mousedown', (e) => {
-  // 広告出てたらスルー
-  if (adOpen) return;
-
-  // 1/3の確率
-  if (Math.random() < 1/3) {
-    openAd();
-  }
-});
-
-// bodyのスクロール、キーボード操作ロック
-function lockBody() {
-  document.body.style.overflow = 'hidden';
-}
-function unlockBody() {
-  document.body.style.overflow = '';
 }
 
-// ポップアップON/OFF
-function openAd() {
-  adBackdrop.classList.remove('hidden');
-  adPopup.classList.remove('hidden');
-  adOpen = true;
-  lockBody();
-  adPopup.focus();
+// ===== 2種類目 詐欺広告モーダル =====
+
+const adModal = document.getElementById('ad-modal');
+const modalBackdrop = document.getElementById('modal-backdrop');
+const adCloseBtn = document.getElementById('ad-close');
+const adDownloadBtn = document.getElementById('ad-download');
+
+// 広告出現管理
+function showAdModal() {
+  adModal.classList.remove('hidden');
+  modalBackdrop.classList.remove('hidden');
+  document.body.style.overflow = 'hidden'; // スクロール不可
 }
-function closeAd() {
-  adBackdrop.classList.add('hidden');
-  adPopup.classList.add('hidden');
-  adOpen = false;
-  unlockBody();
+function hideAdModal() {
+  adModal.classList.add('hidden');
+  modalBackdrop.classList.add('hidden');
+  document.body.style.overflow = 'auto';
 }
 
-// 広告閉じるボタン
-adCloseBtn.addEventListener('click', (e) => {
-  e.stopPropagation();
-  closeAd();
-});
+adCloseBtn.onclick = function(e) {
+  hideAdModal();
+};
 
-// バックドロップクリック無効
-adBackdrop.onclick = (e) => e.stopPropagation();
-
-// 広告クリックで教育用ダウンロード
-adFakeBtn.addEventListener('click', (e) => {
-  e.stopPropagation();
-  triggerDownload();
-  closeAd();
-});
-
-// 本物っぽい「Chrome広告」デザインはimgだけだが、教育目的アピール強めに
-
-// 疑似ファイルダウンロード
-function triggerDownload() {
-  const blob = new Blob([''], { type: 'text/plain' });
-  const url = URL.createObjectURL(blob);
+adDownloadBtn.onclick = function(e) {
+  // 空のファイルDL
+  const blob = new Blob([""], { type: 'text/plain' });
   const a = document.createElement('a');
-  a.href = url;
+  a.href = URL.createObjectURL(blob);
   a.download = '教育用疑似詐欺サイト.txt';
   document.body.appendChild(a);
   a.click();
   setTimeout(() => {
     document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  }, 1000);
-}
+    URL.revokeObjectURL(a.href);
+  }, 400);
+  hideAdModal();
+};
+
+document.body.addEventListener('click', function(e) {
+  // モーダルや広告クリックの場合はエンドレス出現
+  if (adModal.classList.contains('hidden')) {
+    // 1/3確率で広告
+    if (Math.random() < 0.333) {
+      showAdModal();
+    }
+  }
+});
