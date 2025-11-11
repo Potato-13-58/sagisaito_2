@@ -1,5 +1,5 @@
 body {
-  font-family: 'Noto Sans JP', sans-serif;
+  font-family: 'Noto Sans JP', "Meiryo", Arial, sans-serif;
   margin: 0;
   padding: 0;
   background: #f7f9fb;
@@ -41,8 +41,9 @@ body {
   border-radius: 8px;
   font-size: 1rem;
   min-width: 270px;
-  z-index: 9;
+  z-index: 900;
   display: none;
+  white-space: pre-wrap;
 }
 
 /* 広告モーダル */
@@ -55,9 +56,7 @@ body {
   justify-content: center;
   align-items: center;
 }
-.ad-modal.active {
-  display: flex;
-}
+.ad-modal.active { display: flex; }
 
 .ad-content {
   background: #fff;
