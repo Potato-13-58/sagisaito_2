@@ -1,0 +1,90 @@
+body {
+  font-family: 'Noto Sans JP', sans-serif;
+  margin: 0;
+  padding: 0;
+  background: #f7f9fb;
+  color: #222;
+  transition: background 0.7s;
+}
+.header { background: #284b63; color: #fff; padding: 20px 0; }
+.nav { display: flex; justify-content: space-between; align-items: center; max-width: 900px; margin: 0 auto; }
+.logo { font-size: 1.7rem; font-weight: bold; }
+.nav ul { display: flex; gap: 40px; list-style: none; margin: 0; }
+.nav a { color: #fff; text-decoration: none; font-size: 1.1rem; transition: color 0.2s; }
+.nav a:hover { color: #ffd166; }
+.hero { text-align: center; padding: 80px 20px 60px; background: linear-gradient(115deg, #6a89cc 40%, #b8e994 100%); color: #fff; }
+.company-info { max-width: 600px; margin: 60px auto; background: #fff; box-shadow: 0 0 12px rgba(0,0,0,0.11); padding: 32px; border-radius: 16px; }
+.footer { text-align: center; padding: 24px; background: #222233; color: #fff; }
+
+.fade-in { opacity: 0; animation: fadeInAnime 1.2s ease-in forwards; }
+.fade-in:nth-child(2) { animation-delay: .4s; }
+
+@keyframes fadeInAnime {
+  0% { opacity:0; transform: translateY(45px);}
+  100% { opacity:1; transform: translateY(0);}
+}
+
+.slide-in { opacity:0; animation: slideIn 1.1s 0.6s forwards; }
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-60px);}
+  to { opacity: 1; transform: translateX(0);}
+}
+
+/* 情報ダイアログ */
+.info-dialog {
+  position: fixed;
+  top: 24px;
+  left: 24px;
+  background: rgba(235,248,255,0.96);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.09);
+  padding: 22px 33px;
+  border-radius: 8px;
+  font-size: 1rem;
+  min-width: 270px;
+  z-index: 9;
+  display: none;
+}
+
+/* 広告モーダル */
+.ad-modal {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  background: rgba(9,16,31,0.56);
+  z-index: 9999;
+  justify-content: center;
+  align-items: center;
+}
+.ad-modal.active {
+  display: flex;
+}
+
+.ad-content {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 0 32px #81d4fa;
+  padding: 38px 54px;
+  text-align: center;
+  position: relative;
+  min-width: 320px;
+  animation: popUpAnime 0.32s cubic-bezier(0.85,0.32,0.11,0.96) forwards;
+}
+@keyframes popUpAnime {
+  0% { transform: scale(0.71);}
+  100% { transform: scale(1);}
+}
+.ad-close {
+  position: absolute;
+  top: 12px; right: 18px;
+  font-size: 1.6em; color: #555;
+  cursor: pointer; transition: color .14s;
+}
+.ad-close:hover { color: #d50000;}
+/* 広告出現中、全体操作禁止用 */
+body.locked {
+  pointer-events: none;
+  overflow: hidden;
+}
+.ad-modal .ad-content {
+  pointer-events: auto;
+}

@@ -2,144 +2,39 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>教育用・疑似詐欺サイトデモ - 限定公開</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body { margin: 0; font-family: 'Segoe UI', 'ヒラギノ角ゴ', Arial, sans-serif; background: linear-gradient(120deg, #f9fafc 0%, #abccff 100%);}
-    header { background: #3856db; color: white; padding: 2rem 0 1rem 48px; font-size: 2.2rem; }
-    .hero { padding: 3rem 7vw; background: #fff4eb; border-radius: 0 0 3rem 3rem; margin-bottom:2rem; min-height: 280px; box-shadow: 0 8px 18px rgba(34,63,130,0.09);}
-    h1 { font-size: 2.1rem; }
-    .note { background: #ffeeea; padding: .7em; border-radius: 8px; margin-bottom: 1rem;}
-    .company-info { background: #fbfbfb; padding: 1.5rem; border-radius: 1.8rem; margin: 1.7rem 0; }
-    #notifyBanner { position: fixed; top: 24px; left: 24px; background: #fff; border: 1.5px solid #c2c2f7; border-radius: 13px; z-index: 90; padding: 1.3em 1.6em 1.4em 2.8em; color: #3259af; min-width: 280px; font-size: 1.12rem; opacity: 0; pointer-events: none; transition: opacity .5s; display: flex; align-items: center;}
-    #notifyBanner.visible { opacity: 1; pointer-events: auto;}
-    #notifyBanner button {margin-left: 2em; background: #2f62ff; color: white; border: none; border-radius: 9px; font-size: 1.05rem; padding: .45em 1.2em; cursor: pointer; font-weight: 700;}
-    #notifyBanner button:hover { background: #355be8;}
-    #userInfoBox { position: fixed; top: 90px; left: 28px; background: #f8fbff; border: 1px solid #6da8aa; border-radius: 13px; z-index: 99; padding: 1.1em; font-size: 1.03rem; color: #336677; min-width: 220px; box-shadow: 0 1px 12px #1b337822; display: none;}
-    #fakeAdModal { display: none; position: fixed; top:0; left:0; width:100vw; height:100vh; background: rgba(20,30,42,0.4); z-index:200; justify-content:center; align-items:center;}
-    #fakeAdModal.active { display: flex; }
-    .modal-content { background: #fff; border-radius: 17px; min-width: 320px; min-height: 240px; padding: 2.3em; position: relative; display: flex; flex-direction: column; align-items: center;}
-    .close-modal { position: absolute; top: 16px; right: 14px; width: 30px; height: 30px; background: #eef0f6; color: #3761e6; border: none; border-radius: 50%; font-size: 1.5rem; font-weight: bold; cursor: pointer;}
-    .ad-title { font-size: 1.12rem; margin-bottom: .8em; color: #1843a8; font-weight: 700; }
-    .ad-click-btn { background: #ffc980; color: #192e75; font-weight: 700; font-size: 1.07rem; border: none; border-radius: 8px; padding: .56em 2em; cursor: pointer; margin-top: 1.2em; }
-  </style>
+  <title>株式会社Poteto - 教育用 疑似詐欺サイト</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header>疑似ITコンサル株式会社</header>
-  <section class="hero">
-    <h1>教育用・疑似詐欺サイトデモ（限定公開）</h1>
-    <div class="note">
-      🚨このサイトは実際の犯罪行為を助長するものではありません。<br>
-      詐欺サイトの手口を学び、被害防止・啓発目的のみでご利用ください。<br>
-      クリック・許可操作しても情報は一切送信・記録されません。
-    </div>
-    <div class="company-info">
-      <strong>会社案内</strong><br>
-      当社はITコンサルティングサービスを提供しています。<br>
+  <header class="header">
+    <nav class="nav">
+      <div class="logo">株式会社Poteto</div>
       <ul>
-        <li>所在地: 東京都港区架空1-1-1</li>
-        <li>事業内容: ITシステム管理</li>
+        <li><a href="#">会社概要</a></li>
+        <li><a href="#">サービス</a></li>
+        <li><a href="#">お問い合わせ</a></li>
       </ul>
-    </div>
+    </nav>
+  </header>
+  <section class="hero">
+    <h1 class="fade-in">ようこそ、Potetoの公式サイトへ</h1>
+    <p class="fade-in">安心・安全なサービスを提供しています（？）</p>
   </section>
-
-  <!-- Chrome本物の権限ダイアログを出す許可バナー -->
-  <div id="notifyBanner">
-    <span>FaceBook.comが次の許可を求めています: <br>
-      <strong>通知の表示</strong>、<strong>位置情報</strong>等</span>
-    <button id="notificationAllowBtn">許可</button>
-  </div>
-  <div id="userInfoBox"></div>
-
-  <!-- 広告モーダル -->
-  <div id="fakeAdModal">
-    <div class="modal-content">
-      <button class="close-modal" id="closeAd">&times;</button>
-      <div class="ad-title">Chrome広告: 驚きの新サービス!</div>
-      <img src="https://placehold.jp/300x120.png?text=Ad" width="280" height="112" alt="広告イメージ">
-      <button class="ad-click-btn" id="adDownloadBtn">もっと見る（クリックでダウンロード）</button>
+  <section class="company-info slide-in">
+    <h2>会社概要</h2>
+    <p>株式会社PotetoはAIを活用したWEB制作会社です。</p>
+  </section>
+  <footer class="footer">
+    <p>© 2025 Poteto Inc. All rights reserved.</p>
+  </footer>
+  <div id="info-dialog" class="info-dialog"></div>
+  <div id="ad-modal" class="ad-modal">
+    <div class="ad-content">
+      <span class="ad-close" id="ad-close">&times;</span>
+      <h3>超お得！限定広告！</h3>
+      <p>今なら絶好のチャンス！クリックして詳細をGET！（絶対押さないで）</p>
     </div>
   </div>
-
-  <script>
-    // 5秒後に許可バナー表示
-    setTimeout(() => {
-      document.getElementById('notifyBanner').classList.add('visible');
-    }, 5000);
-
-    document.getElementById('notificationAllowBtn').addEventListener('click', async () => {
-      let infoHTML = `<b>取得できた情報:</b><br>`;
-      // 通知のChrome本物ダイアログ
-      let notifyPerm = '[通知] 対応していません<br>';
-      if ("Notification" in window) {
-        try {
-          const perm = await Notification.requestPermission();
-          notifyPerm = `[通知] 権限：<b>${perm}</b><br>`;
-          if (perm === 'granted') {
-            new Notification("通知許可が成功しました！ (教育デモ)");
-          }
-        } catch { notifyPerm = '[通知] 権限要求エラー<br>';}
-      }
-      infoHTML += notifyPerm;
-      // 位置情報をChrome本物ダイアログ
-      if ("geolocation" in navigator) {
-        navigator.geolocation.getCurrentPosition(pos => {
-          infoHTML += `[位置情報]<br>
-            緯度：<b>${pos.coords.latitude}</b><br>
-            経度：<b>${pos.coords.longitude}</b><br>
-            精度：${pos.coords.accuracy}m<br>
-          `;
-          showInfoBox(infoHTML + getOtherInfo());
-        }, err => {
-          infoHTML += `[位置情報] エラー：${err.message}<br>`;
-          showInfoBox(infoHTML + getOtherInfo());
-        });
-      } else {
-        infoHTML += "[位置情報] 対応していません<br>";
-        showInfoBox(infoHTML + getOtherInfo());
-      }
-      setTimeout(() => {document.getElementById('notifyBanner').classList.remove('visible');}, 900);
-    });
-
-    // 追加情報
-    function getOtherInfo() {
-      let txt = "";
-      txt += `<hr><b>ブラウザ情報（UserAgent）:</b><br>${navigator.userAgent}<br>`;
-      txt += `<hr><b>OS/ブラウザ言語:</b><br>${navigator.language}<br>`;
-      txt += `<hr><b>画面サイズ:</b><br>${window.screen.width} x ${window.screen.height}<br>`;
-      txt += `<hr><b>【注意】個人情報は一切サーバー送信しません</b>`;
-      return txt;
-    }
-    function showInfoBox(html) {
-      const box = document.getElementById('userInfoBox');
-      box.innerHTML = html;
-      box.style.display = 'block';
-    }
-
-    // クリックで1/3確率で広告表示（広告出てたら無効）
-    document.body.addEventListener('click', function(e) {
-      if (document.getElementById('fakeAdModal').classList.contains('active')) return;
-      if (e.target.closest && (e.target.closest('#notifyBanner') || e.target.closest('#userInfoBox'))) return;
-      if (Math.random() < 0.333) {
-        showAdModal();
-      }
-    });
-
-    function showAdModal() {
-      document.getElementById('fakeAdModal').classList.add('active');
-    }
-    document.getElementById('closeAd').onclick = function() {
-      document.getElementById('fakeAdModal').classList.remove('active');
-    };
-    document.getElementById('adDownloadBtn').onclick = function() {
-      const blob = new Blob([''], {type: 'text/plain'});
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = "教育用疑似詐欺サイト.txt";
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-    };
-  </script>
+  <script src="main.js"></script>
 </body>
 </html>
