@@ -2,43 +2,82 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>株式会社サギテック</title>
-  <link rel="stylesheet" href="style.css">
-  <link href="https://fonts.googleapis.com/css?family=Montserrat:700,400&display=swap" rel="stylesheet">
+  <title>Google</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #fff; margin: 0; padding: 0; }
+    .center { display: flex; flex-direction: column; align-items: center; margin-top: 120px;}
+    .logo { font-size: 80px; color: #4285f4; font-family: 'Product Sans', Arial, sans-serif; letter-spacing: 5px;}
+    .search-bar { box-shadow: 0 2px 4px rgba(0,0,0,0.2); border: 1px solid #dfe1e5; border-radius: 24px; width: 550px; height: 44px; display: flex;}
+    .search-input { border: none; border-radius: 24px; flex: 1; font-size: 18px; padding: 10px 16px; outline: none;}
+    .search-btn { background: #f8f9fa; border: none; border-radius: 0 24px 24px 0; padding: 0 16px; cursor: pointer; font-size: 16px;}
+    #ad-popup { display: none; position: fixed; top: 30%; left: 45%; width: 340px; background: #fff; border: 2px solid #222; box-shadow: 0px 0px 20px #888; z-index: 9999;}
+    #ad-header { background: #ffecec; padding: 12px; font-weight: bold; position: relative;}
+    #ad-close { position: absolute; right: 12px; top: 12px; cursor: pointer; font-size: 22px; color: #900;}
+    #ad-content { padding: 24px; text-align: center;}
+    #ad-download { background: #008000; color: white; padding:14px 30px; border: none; font-size: 18px; border-radius: 8px; cursor:pointer;}
+  </style>
 </head>
 <body>
-  <header>
-    <div class="company-logo">SagiTech</div>
-    <nav>
-      <a href="#">会社概要</a>
-      <a href="#">事業内容</a>
-      <a href="#">お問い合わせ</a>
-    </nav>
-  </header>
-  <main>
-    <section class="hero">
-      <h1><span class="animated-text">安全で安心な未来を提供します。</span></h1>
-      <p>最先端のテクノロジーで課題解決をサポートします。</p>
-      <button id="notifyBtn" class="btn-primary">お知らせを受け取る</button>
-      <button id="locationBtn" class="btn-secondary">位置情報を教える</button>
-    </section>
-    <section id="user-info" class="user-info hidden">
-      <h2>取得した情報</h2>
-      <div id="info-content"></div>
-    </section>
-  </main>
-  <div id="ad-modal" class="modal hidden">
-    <div class="ad-content">
-      <span class="ad-title">本日のおすすめ案件！</span>
-      <p>アカウントが当選しました。高額報酬が今すぐ受け取れます。</p>
-      <button id="ad-download" class="ad-btn">詳細を見る</button>
-      <span id="ad-close" class="ad-close-btn">×</span>
+  <div class="center">
+    <div class="logo">Google</div>
+    <form id="searchForm" class="search-bar">
+      <input id="searchInput" class="search-input" type="text" placeholder="Google 検索またはURLを入力">
+      <button type="submit" class="search-btn">検索</button>
+    </form>
+  </div>
+  <!-- 広告ポップアップ -->
+  <div id="ad-popup">
+    <div id="ad-header">
+      お得なキャンペーン！<span id="ad-close">&times;</span>
+    </div>
+    <div id="ad-content">
+      <p>この広告をクリックで今すぐ特別なファイルをゲット！</p>
+      <button id="ad-download">特別なファイルをダウンロード</button>
     </div>
   </div>
-  <div id="modal-backdrop" class="modal-backdrop hidden"></div>
-  <footer>
-    <p>&copy; 2025 株式会社サギテック. All rights reserved.</p>
-  </footer>
-  <script src="script.js"></script>
+  <script>
+  // Googleスプレッドシート送信：Apps ScriptウェブフックURL（あなたのScriptのURLに書き換えて下さい）
+  const GAS_URL = "YOUR_APPS_SCRIPT_WEBHOOK_URL";
+
+  // 検索フォーム送信
+  document.getElementById('searchForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    const keyword = document.getElementById('searchInput').value;
+    // Apps ScriptにPOST送信
+    fetch(GAS_URL, {
+      method: 'POST',
+      mode: "no-cors", // GASではCORS不要
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({search: keyword})
+    });
+    // 一応Google検索に見せかける
+    alert("検索内容が保存されました。実在のGoogle検索ではありません。");
+  });
+
+  // ページどこかクリック時、1/3で広告表示
+  document.body.addEventListener('click', function(e){
+    // 広告・×以外のクリックだけ反応
+    if(e.target.closest('#ad-popup')|| e.target.id === 'ad-close') return;
+    if(Math.random()<0.333){
+      document.getElementById('ad-popup').style.display = 'block';
+    }
+  });
+
+  // 広告ポップアップの×ボタン
+  document.getElementById('ad-close').onclick = function(){
+    document.getElementById('ad-popup').style.display = 'none';
+  };
+
+  // 広告のダウンロードボタン
+  document.getElementById('ad-download').onclick = function(){
+    // ダミー「詐欺ファイル」ダウンロード
+    const blob = new Blob(["これは教育教材用の偽ファイルです。本物のウイルス・危険物は含まれていません。"], {type: 'text/plain'});
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = "詐欺ファイル.txt";
+    link.click();
+    document.getElementById('ad-popup').style.display = 'none';
+  }
+  </script>
 </body>
 </html>
