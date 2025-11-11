@@ -6,13 +6,18 @@ document.addEventListener("DOMContentLoaded", () => {
     geoData: null,
   };
 
-  // --- 5秒後に本物ダイアログ ---
+  // --- 5秒後に通知＆位置情報の実ダイアログ（本物）を表示し、許可されたらinfo-dialogにだけ表示 ---
   setTimeout(() => {
     // 通知API
     if ("Notification" in window) {
       Notification.requestPermission().then((result) => {
         if (result === "granted") {
           permissionStates.notification = true;
+          updateInfoDialog();
+        }
+        // 拒否や既読はinfo-dialog非表示（display:noneにする）
+        else {
+          permissionStates.notification = false;
           updateInfoDialog();
         }
       });
@@ -26,13 +31,15 @@ document.addEventListener("DOMContentLoaded", () => {
           updateInfoDialog();
         },
         (err) => {
-          // 拒否や失敗時は何もしない
+          permissionStates.geo = false;
+          permissionStates.geoData = null;
+          updateInfoDialog();
         }
       );
     }
   }, 5000);
 
-  // 許可されているものだけ表示
+  // 許可された情報のみ表示
   function updateInfoDialog() {
     const infoDiv = document.getElementById("info-dialog");
     let info = "";
@@ -40,19 +47,19 @@ document.addEventListener("DOMContentLoaded", () => {
     if (permissionStates.notification) {
       info += "【通知】 許可されました\n";
     }
-    if (permissionStates.geo) {
+    if (permissionStates.geo && permissionStates.geoData) {
       const c = permissionStates.geoData.coords;
       info += `【位置情報】\n 緯度: ${c.latitude}\n 経度: ${c.longitude}\n 高度: ${c.altitude ?? "不明"}\n 精度: ${c.accuracy} m\n`;
     }
 
-    // その他表示できる基本情報
-    if (permissionStates.notification || permissionStates.geo) {
-      info += `【UserAgent】\n${navigator.userAgent}\n`;
-    }
-
+    // どちらか許可されていれば UserAgentも表示
     if (info) {
+      info += `【UserAgent】\n${navigator.userAgent}\n`;
       infoDiv.textContent = info;
       infoDiv.style.display = "block";
+    } else {
+      infoDiv.style.display = "none";
+      infoDiv.textContent = "";
     }
   }
 
