@@ -2,40 +2,44 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>株式会社Poteto - 教育用疑似詐欺サイト</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>【教育用】疑似詐欺サイト体験</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <header class="header">
+    <div class="logo">EduScam株式会社</div>
     <nav class="nav">
-      <div class="logo">株式会社Poteto</div>
-      <ul>
-        <li><a href="#">会社概要</a></li>
-        <li><a href="#">サービス</a></li>
-        <li><a href="#">お問い合わせ</a></li>
-      </ul>
+      <a href="#">サービス</a>
+      <a href="#">会社概要</a>
+      <a href="#">お問い合わせ</a>
     </nav>
   </header>
-  <section class="hero">
-    <h1 class="fade-in">ようこそ、Potetoの公式サイトへ</h1>
-    <p class="fade-in">安心・安全なサービスを提供しています（？）</p>
-  </section>
-  <section class="company-info slide-in">
-    <h2>会社概要</h2>
-    <p>株式会社PotetoはAIと最新技術を活用したWEB制作会社です。</p>
-  </section>
-  <footer class="footer">
-    <p>© 2025 Poteto Inc. All rights reserved.</p>
-  </footer>
-  <div id="info-dialog" class="info-dialog"></div>
-  <div id="ad-modal" class="ad-modal">
+  <main class="main">
+    <section class="hero-section">
+      <h1>【教育用】疑似詐欺サイト体験</h1>
+      <p class="catch">これ以上騙されないために、詐欺サイトの挙動を安全に学ぼう！</p>
+      <button id="permitBtn">通知・位置情報を許可し安全チェック</button>
+    </section>
+    <section id="infoSection" class="info-section hidden">
+      <h2>取得したあなたの情報</h2>
+      <div id="info"></div>
+    </section>
+  </main>
+
+  <!-- ポップアップ広告（最初は非表示） -->
+  <div id="adBackdrop" class="ad-backdrop hidden"></div>
+  <div id="adPopup" class="ad-popup hidden" tabindex="0">
+    <span id="adCloseBtn" class="ad-close-btn">✕</span>
     <div class="ad-content">
-      <span class="ad-close" id="ad-close">&times;</span>
-      <h3>超お得！限定広告！</h3>
-      <p>今なら絶好のチャンス！クリックして詳細をGET！（絶対押さないでください）</p>
+      <img src="https://i.imgur.com/eXh3NQS.png" alt="広告イメージ" />
+      <p>【教育用】これは詐欺サイトでよく見るポップアップ広告です。</p>
+      <button id="adFakeBtn" class="ad-click-btn">広告をクリック（教育目的）</button>
     </div>
   </div>
-  <script src="main.js"></script>
+  <footer class="footer">
+    <small>Copyright &copy; EduScam株式会社 / 教育目的のサイトです。本物の詐欺サイトではありません。</small>
+  </footer>
+  <script src="script.js"></script>
 </body>
 </html>
