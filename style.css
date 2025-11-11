@@ -79,7 +79,6 @@ body {
   cursor: pointer; transition: color .14s;
 }
 .ad-close:hover { color: #d50000;}
-/* 広告出現中、全体操作禁止用 */
 body.locked {
   pointer-events: none;
   overflow: hidden;
